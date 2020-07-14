@@ -13,10 +13,7 @@ namespace ConstructionLine.CodingChallenge.Tests
         public void SetUp()
         {
             Shirts = Fixture.CreateMany<Shirt>(50000).ToList();
-            _classUnderTest = new SearchEngine(Shirts);
         }
-
-        private SearchEngine _classUnderTest;
 
 
         [Test]
@@ -28,7 +25,7 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Colors = Fixture.CreateMany<Color>().ToList()
             };
             // act
-            Action act = () => _classUnderTest.Search(searchOptions);
+            Action act = () => ClassUnderTest.Search(searchOptions);
             // assert
             act.ExecutionTime().Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(100));
         }
@@ -43,7 +40,7 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Colors = Fixture.CreateMany<Color>().ToList()
             };
             // act
-            var results = _classUnderTest.Search(searchOptions);
+            var results = ClassUnderTest.Search(searchOptions);
             // assert
             AssertResults(searchOptions, results.Shirts);
             AssertColorCounts(searchOptions, results.ColorCounts);
@@ -60,7 +57,7 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Sizes = Fixture.CreateMany<Size>().ToList()
             };
             // act
-            Action act = () => _classUnderTest.Search(searchOptions);
+            Action act = () => ClassUnderTest.Search(searchOptions);
             // assert
             act.ExecutionTime().Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(100));
         }
@@ -75,7 +72,7 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Sizes = Fixture.CreateMany<Size>().ToList()
             };
             // act
-            var results = _classUnderTest.Search(searchOptions);
+            var results = ClassUnderTest.Search(searchOptions);
             // assert
             AssertResults(searchOptions, results.Shirts);
             AssertColorCounts(searchOptions, results.ColorCounts);
@@ -91,7 +88,7 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Sizes = Fixture.CreateMany<Size>().ToList()
             };
             // act
-            Action act = () => _classUnderTest.Search(searchOptions);
+            Action act = () => ClassUnderTest.Search(searchOptions);
             // assert
             act.ExecutionTime().Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(100));
         }
@@ -105,7 +102,7 @@ namespace ConstructionLine.CodingChallenge.Tests
                 Sizes = Fixture.CreateMany<Size>().ToList()
             };
             // act
-            var results = _classUnderTest.Search(searchOptions);
+            var results = ClassUnderTest.Search(searchOptions);
             // assert
             AssertResults(searchOptions, results.Shirts);
             AssertColorCounts(searchOptions, results.ColorCounts);

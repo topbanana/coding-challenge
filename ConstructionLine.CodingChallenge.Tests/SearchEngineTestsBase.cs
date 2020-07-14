@@ -10,6 +10,8 @@ namespace ConstructionLine.CodingChallenge.Tests
     {
         protected Fixture Fixture;
         protected List<Shirt> Shirts = new List<Shirt>();
+        protected SearchEngine ClassUnderTest => new SearchEngine(Shirts);
+
 
         [SetUp]
         public void BaseSetup()
@@ -26,6 +28,7 @@ namespace ConstructionLine.CodingChallenge.Tests
             var evaluatedColorCount = Color.All.Select(color => new ColorCount
                 {Color = color, Count = matchingShirts.Count(shirt => shirt.Color.Id == color.Id)});
             resultsColorCounts.Should().BeEquivalentTo(evaluatedColorCount);
+            resultsColorCounts.Sum(x => x.Count).Should().Be(matchingShirts.Count);
         }
 
         protected void AssertSizeCounts(SearchOptions searchOptions,
@@ -35,6 +38,7 @@ namespace ConstructionLine.CodingChallenge.Tests
             var evaluatedSizeCount = Size.All.Select(size => new SizeCount
                 {Size = size, Count = matchingShirts.Count(shirt => shirt.Size.Id == size.Id)});
             resultsSizeCounts.Should().BeEquivalentTo(evaluatedSizeCount);
+            resultsSizeCounts.Sum(x => x.Count).Should().Be(matchingShirts.Count);
         }
 
         private List<Shirt> GetMatchingShirts(SearchOptions searchOptions)

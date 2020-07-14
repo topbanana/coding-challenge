@@ -8,14 +8,17 @@ namespace ConstructionLine.CodingChallenge.Tests
     [TestFixture]
     public class SearchEngineTests : SearchEngineTestsBase
     {
-        private SearchEngine ClassUnderTest => new SearchEngine(Shirts);
-
+        [SetUp]
+        public void SetUp()
+        {
+            Shirts = Fixture.CreateMany<Shirt>().ToList();
+        }
 
         [Test]
         public void Search_WithColorAndSizeSearchOptions_ColorCountsAreCorrect()
         {
             // arrange
-            Shirts = Fixture.CreateMany<Shirt>().ToList();
+
             var searchOptions = new SearchOptions
             {
                 Colors = new List<Color> {Color.Red},

@@ -18,7 +18,6 @@ namespace ConstructionLine.CodingChallenge.Tests
         public void Search_WithColorAndSizeSearchOptions_ColorCountsAreCorrect()
         {
             // arrange
-
             var searchOptions = new SearchOptions
             {
                 Colors = new List<Color> {Color.Red},
@@ -29,7 +28,6 @@ namespace ConstructionLine.CodingChallenge.Tests
             // assert
             AssertColorCounts(searchOptions, results.ColorCounts);
         }
-
 
         [Test]
         public void Search_WithColorAndSizeSearchOptions_ResultsAreCorrect()
@@ -108,7 +106,6 @@ namespace ConstructionLine.CodingChallenge.Tests
             AssertSizeCounts(searchOptions, results.SizeCounts);
         }
 
-
         [Test]
         public void Search_WithNoSearchOption_ColorCountsAreCorrect()
         {
@@ -120,7 +117,6 @@ namespace ConstructionLine.CodingChallenge.Tests
             // assert
             AssertColorCounts(searchOptions, results.ColorCounts);
         }
-
 
         [Test]
         public void Search_WithNoSearchOption_ResultsAreCorrect()
@@ -161,7 +157,6 @@ namespace ConstructionLine.CodingChallenge.Tests
             // assert
             AssertColorCounts(searchOptions, results.ColorCounts);
         }
-
 
         [Test]
         public void Search_WithSearchOptionForAllSizesAndColors_ResultsAreCorrect()

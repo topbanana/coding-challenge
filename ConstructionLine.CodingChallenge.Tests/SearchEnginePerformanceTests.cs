@@ -14,8 +14,7 @@ namespace ConstructionLine.CodingChallenge.Tests
         {
             Shirts = Fixture.CreateMany<Shirt>(50000).ToList();
         }
-
-
+        
         [Test]
         public void PerformanceTest_WithColorSearchOptions_ExecutesWithinTime()
         {
@@ -29,8 +28,7 @@ namespace ConstructionLine.CodingChallenge.Tests
             // assert
             act.ExecutionTime().Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(100));
         }
-
-
+        
         [Test]
         public void PerformanceTest_WithColorSearchOptions_ResultsAreCorrect()
         {

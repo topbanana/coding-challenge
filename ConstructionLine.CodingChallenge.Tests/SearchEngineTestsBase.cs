@@ -12,7 +12,6 @@ namespace ConstructionLine.CodingChallenge.Tests
         protected List<Shirt> Shirts = new List<Shirt>();
         protected SearchEngine ClassUnderTest => new SearchEngine(Shirts);
 
-
         [SetUp]
         public void BaseSetup()
         {
@@ -41,6 +40,12 @@ namespace ConstructionLine.CodingChallenge.Tests
             resultsSizeCounts.Sum(x => x.Count).Should().Be(matchingShirts.Count);
         }
 
+        protected void AssertResults(SearchOptions searchOptions, List<Shirt> resultsShirts)
+        {
+            var matchingShirts = GetMatchingShirts(searchOptions);
+            matchingShirts.Should().BeEquivalentTo(resultsShirts);
+        }
+
         private List<Shirt> GetMatchingShirts(SearchOptions searchOptions)
         {
             return Shirts
@@ -49,12 +54,6 @@ namespace ConstructionLine.CodingChallenge.Tests
                 .Where(shirt =>
                     !searchOptions.Colors.Any() ||
                     searchOptions.Colors.Select(color => color.Id).Contains(shirt.Color.Id)).ToList();
-        }
-
-        protected void AssertResults(SearchOptions searchOptions, List<Shirt> resultsShirts)
-        {
-            var matchingShirts = GetMatchingShirts(searchOptions);
-            matchingShirts.Should().BeEquivalentTo(resultsShirts);
         }
     }
 }

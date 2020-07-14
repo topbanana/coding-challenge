@@ -37,7 +37,7 @@ namespace ConstructionLine.CodingChallenge.Tests
             resultsSizeCounts.Should().BeEquivalentTo(evaluatedSizeCount);
         }
 
-        protected List<Shirt> GetMatchingShirts(SearchOptions searchOptions)
+        private List<Shirt> GetMatchingShirts(SearchOptions searchOptions)
         {
             return Shirts
                 .Where(shirt =>

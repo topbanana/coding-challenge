@@ -2,15 +2,17 @@
 using System.Linq;
 using AutoFixture;
 using FluentAssertions;
+using NUnit.Framework;
 
 namespace ConstructionLine.CodingChallenge.Tests
 {
     public class SearchEngineTestsBase
     {
-        protected readonly Fixture Fixture;
+        protected Fixture Fixture;
         protected List<Shirt> Shirts = new List<Shirt>();
 
-        protected SearchEngineTestsBase()
+        [SetUp]
+        public void BaseSetup()
         {
             Fixture = new Fixture();
             Fixture.Customizations.Add(new ElementsBuilder<Size>(Size.All));

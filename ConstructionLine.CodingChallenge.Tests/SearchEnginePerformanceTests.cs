@@ -9,13 +9,14 @@ namespace ConstructionLine.CodingChallenge.Tests
     [TestFixture]
     public class SearchEnginePerformanceTests : SearchEngineTestsBase
     {
-        private readonly SearchEngine _classUnderTest;
-
-        public SearchEnginePerformanceTests()
+        [SetUp]
+        public void SetUp()
         {
             Shirts = Fixture.CreateMany<Shirt>(50000).ToList();
             _classUnderTest = new SearchEngine(Shirts);
         }
+
+        private SearchEngine _classUnderTest;
 
 
         [Test]

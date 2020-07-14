@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using ConstructionLine.CodingChallenge.Tests.SampleData;
+using System.Linq;
+using AutoFixture;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace ConstructionLine.CodingChallenge.Tests
@@ -9,40 +9,106 @@ namespace ConstructionLine.CodingChallenge.Tests
     [TestFixture]
     public class SearchEnginePerformanceTests : SearchEngineTestsBase
     {
-        private List<Shirt> _shirts;
-        private SearchEngine _searchEngine;
+        private readonly SearchEngine _classUnderTest;
 
-        [SetUp]
-        public void Setup()
+        public SearchEnginePerformanceTests()
         {
-            
-            var dataBuilder = new SampleDataBuilder(50000);
-
-            _shirts = dataBuilder.CreateShirts();
-
-            _searchEngine = new SearchEngine(_shirts);
+            Shirts = Fixture.CreateMany<Shirt>(50000).ToList();
+            _classUnderTest = new SearchEngine(Shirts);
         }
 
 
         [Test]
-        public void PerformanceTest()
+        public void PerformanceTest_WithColorSearchOptions_ExecutesWithinTime()
         {
-            var sw = new Stopwatch();
-            sw.Start();
-
-            var options = new SearchOptions
+            // arrange
+            var searchOptions = new SearchOptions
             {
-                Colors = new List<Color> { Color.Red }
+                Colors = Fixture.CreateMany<Color>().ToList()
             };
+            // act
+            Action act = () => _classUnderTest.Search(searchOptions);
+            // assert
+            act.ExecutionTime().Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(100));
+        }
 
-            var results = _searchEngine.Search(options);
 
-            sw.Stop();
-            Console.WriteLine($"Test fixture finished in {sw.ElapsedMilliseconds} milliseconds");
+        [Test]
+        public void PerformanceTest_WithColorSearchOptions_ResultsAreCorrect()
+        {
+            // arrange
+            var searchOptions = new SearchOptions
+            {
+                Colors = Fixture.CreateMany<Color>().ToList()
+            };
+            // act
+            var results = _classUnderTest.Search(searchOptions);
+            // assert
+            AssertResults(searchOptions, results.Shirts);
+            AssertColorCounts(searchOptions, results.ColorCounts);
+            AssertSizeCounts(searchOptions, results.SizeCounts);
+        }
 
-            AssertResults(results.Shirts, options);
-            AssertSizeCounts(_shirts, options, results.SizeCounts);
-            AssertColorCounts(_shirts, options, results.ColorCounts);
+        [Test]
+        public void PerformanceTest_WithSizeAndColorSearchOptions_ExecutesWithinTime()
+        {
+            // arrange
+            var searchOptions = new SearchOptions
+            {
+                Colors = Fixture.CreateMany<Color>().ToList(),
+                Sizes = Fixture.CreateMany<Size>().ToList()
+            };
+            // act
+            Action act = () => _classUnderTest.Search(searchOptions);
+            // assert
+            act.ExecutionTime().Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(100));
+        }
+
+        [Test]
+        public void PerformanceTest_WithSizeAndColorSearchOptions_ResultsAreCorrect()
+        {
+            // arrange
+            var searchOptions = new SearchOptions
+            {
+                Colors = Fixture.CreateMany<Color>().ToList(),
+                Sizes = Fixture.CreateMany<Size>().ToList()
+            };
+            // act
+            var results = _classUnderTest.Search(searchOptions);
+            // assert
+            AssertResults(searchOptions, results.Shirts);
+            AssertColorCounts(searchOptions, results.ColorCounts);
+            AssertSizeCounts(searchOptions, results.SizeCounts);
+        }
+
+        [Test]
+        public void PerformanceTest_WithSizeSearchOptions_ExecutesWithinTime()
+        {
+            // arrange
+            var searchOptions = new SearchOptions
+            {
+                Sizes = Fixture.CreateMany<Size>().ToList()
+            };
+            // act
+            Action act = () => _classUnderTest.Search(searchOptions);
+            // assert
+            act.ExecutionTime().Should().BeLessOrEqualTo(TimeSpan.FromMilliseconds(100));
+        }
+
+        [Test]
+        public void PerformanceTest_WithSizeSearchOptions_ResultsAreCorrect()
+        {
+            // arrange
+            var searchOptions = new SearchOptions
+            {
+                Sizes = Fixture.CreateMany<Size>().ToList()
+            };
+            // act
+            var results = _classUnderTest.Search(searchOptions);
+            // assert
+            AssertResults(searchOptions, results.Shirts);
+            AssertColorCounts(searchOptions, results.ColorCounts);
+            AssertSizeCounts(searchOptions, results.SizeCounts);
         }
     }
 }

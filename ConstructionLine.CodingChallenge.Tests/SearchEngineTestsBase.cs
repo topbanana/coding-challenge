@@ -1,68 +1,54 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using AutoFixture;
+using FluentAssertions;
 
 namespace ConstructionLine.CodingChallenge.Tests
 {
     public class SearchEngineTestsBase
     {
-        protected static void AssertResults(List<Shirt> shirts, SearchOptions options)
+        protected readonly Fixture Fixture;
+        protected List<Shirt> Shirts = new List<Shirt>();
+
+        protected SearchEngineTestsBase()
         {
-            Assert.That(shirts, Is.Not.Null);
-
-            var resultingShirtIds = shirts.Select(s => s.Id).ToList();
-            var sizeIds = options.Sizes.Select(s => s.Id).ToList();
-            var colorIds = options.Colors.Select(c => c.Id).ToList();
-
-            foreach (var shirt in shirts)
-            {
-                if (sizeIds.Contains(shirt.Size.Id)
-                    && colorIds.Contains(shirt.Color.Id)
-                    && !resultingShirtIds.Contains(shirt.Id))
-                {
-                    Assert.Fail($"'{shirt.Name}' with Size '{shirt.Size.Name}' and Color '{shirt.Color.Name}' not found in results, " +
-                                $"when selected sizes where '{string.Join(",", options.Sizes.Select(s => s.Name))}' " +
-                                $"and colors '{string.Join(",", options.Colors.Select(c => c.Name))}'");
-                }
-            }
+            Fixture = new Fixture();
+            Fixture.Customizations.Add(new ElementsBuilder<Size>(Size.All));
+            Fixture.Customizations.Add(new ElementsBuilder<Color>(Color.All));
         }
 
-
-        protected static void AssertSizeCounts(List<Shirt> shirts, SearchOptions searchOptions, List<SizeCount> sizeCounts)
+        protected void AssertColorCounts(SearchOptions searchOptions,
+            List<ColorCount> resultsColorCounts)
         {
-            Assert.That(sizeCounts, Is.Not.Null);
-
-            foreach (var size in Size.All)
-            {
-                var sizeCount = sizeCounts.SingleOrDefault(s => s.Size.Id == size.Id);
-                Assert.That(sizeCount, Is.Not.Null, $"Size count for '{size.Name}' not found in results");
-
-                var expectedSizeCount = shirts
-                    .Count(s => s.Size.Id == size.Id
-                                && (!searchOptions.Colors.Any() || searchOptions.Colors.Select(c => c.Id).Contains(s.Color.Id)));
-
-                Assert.That(sizeCount.Count, Is.EqualTo(expectedSizeCount), 
-                    $"Size count for '{sizeCount.Size.Name}' showing '{sizeCount.Count}' should be '{expectedSizeCount}'");
-            }
+            var matchingShirts = GetMatchingShirts(searchOptions);
+            var evaluatedColorCount = Color.All.Select(color => new ColorCount
+                {Color = color, Count = matchingShirts.Count(shirt => shirt.Color.Id == color.Id)});
+            resultsColorCounts.Should().BeEquivalentTo(evaluatedColorCount);
         }
 
-
-        protected static void AssertColorCounts(List<Shirt> shirts, SearchOptions searchOptions, List<ColorCount> colorCounts)
+        protected void AssertSizeCounts(SearchOptions searchOptions,
+            List<SizeCount> resultsSizeCounts)
         {
-            Assert.That(colorCounts, Is.Not.Null);
-            
-            foreach (var color in Color.All)
-            {
-                var colorCount = colorCounts.SingleOrDefault(s => s.Color.Id == color.Id);
-                Assert.That(colorCount, Is.Not.Null, $"Color count for '{color.Name}' not found in results");
+            var matchingShirts = GetMatchingShirts(searchOptions);
+            var evaluatedSizeCount = Size.All.Select(size => new SizeCount
+                {Size = size, Count = matchingShirts.Count(shirt => shirt.Size.Id == size.Id)});
+            resultsSizeCounts.Should().BeEquivalentTo(evaluatedSizeCount);
+        }
 
-                var expectedColorCount = shirts
-                    .Count(c => c.Color.Id == color.Id  
-                                && (!searchOptions.Sizes.Any() || searchOptions.Sizes.Select(s => s.Id).Contains(c.Size.Id)));
+        protected List<Shirt> GetMatchingShirts(SearchOptions searchOptions)
+        {
+            return Shirts
+                .Where(shirt =>
+                    !searchOptions.Sizes.Any() || searchOptions.Sizes.Select(size => size.Id).Contains(shirt.Size.Id))
+                .Where(shirt =>
+                    !searchOptions.Colors.Any() ||
+                    searchOptions.Colors.Select(color => color.Id).Contains(shirt.Color.Id)).ToList();
+        }
 
-                Assert.That(colorCount.Count, Is.EqualTo(expectedColorCount),
-                    $"Color count for '{colorCount.Color.Name}' showing '{colorCount.Count}' should be '{expectedColorCount}'");
-            }
+        protected void AssertResults(SearchOptions searchOptions, List<Shirt> resultsShirts)
+        {
+            var matchingShirts = GetMatchingShirts(searchOptions);
+            matchingShirts.Should().BeEquivalentTo(resultsShirts);
         }
     }
 }
